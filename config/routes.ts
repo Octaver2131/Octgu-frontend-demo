@@ -7,7 +7,9 @@ export default [
       { path: '/user/register', component: './User/Register' },
     ],
   },
-  { path: '/welcome', icon: 'smile', component: './Welcome', name: '欢迎页' },
+  { path: '/welcome', icon: 'LikeOutlined', component: './Welcome', name: '欢迎页' },
+  { path: '/overview', icon: 'BarChartOutlined', component: './Overview', name: '概览页' },
+  { path: '/item', icon: 'FormOutlined', component: './Item', name: '项目页' },
   {
     path: '/admin',
     icon: 'crown',
