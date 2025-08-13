@@ -91,7 +91,7 @@ const Welcome: React.FC = () => {
       <Card
         style={{
           borderRadius: 8,
-          height: '520px',
+          height: '720px',
         }}
         bodyStyle={{
           backgroundImage:

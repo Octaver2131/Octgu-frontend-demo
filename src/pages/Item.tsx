@@ -11,6 +11,7 @@ const Item: React.FC = () => {
   // 表单数据状态
   const [formData, setFormData] = React.useState<Partial<DataType>>({
     name: '',
+    ip: '',
     category: '',
     quantity: 0,
     price: 0,
@@ -22,6 +23,7 @@ const Item: React.FC = () => {
     // 重置表单数据
     setFormData({
       name: '',
+      ip: '',
       category: '',
       quantity: 0,
       price: 0,
@@ -50,7 +52,7 @@ const Item: React.FC = () => {
   // 关闭弹窗（确认）
   const handleOk = () => {
     // 验证表单
-    if (!formData.name || !formData.category || !formData.date) {
+    if (!formData.name || !formData.ip || !formData.category || !formData.date) {
       alert('请填写完整信息');
       return;
     }
@@ -62,6 +64,7 @@ const Item: React.FC = () => {
     const newItem: DataType = {
       key: String(data.length + 1),
       name: formData.name,
+      ip: formData.ip,
       category: formData.category,
       quantity: formData.quantity || 0,
       price: formData.price || 0,
@@ -78,6 +81,7 @@ const Item: React.FC = () => {
     // 强制重新渲染
     setFormData({
       name: '',
+      ip: '',
       category: '',
       quantity: 0,
       price: 0,
@@ -97,129 +101,222 @@ const Item: React.FC = () => {
   };
 
   const onChange: DatePickerProps['onChange'] = (date, dateString) => {
-  console.log(date, dateString);
-};
+    console.log(date, dateString);
+  };
 
-const { Search } = Input;
+  const { Search } = Input;
 
-interface DataType {
-  key: string;
-  name: string;
-  category: string;
-  quantity: number;
-  price: number;
-  totalPrice: number;
-  date: string;
-}
+  interface DataType {
+    key: string;
+    name: string;
+    ip: string;
+    category: string;
+    quantity: number;
+    price: number;
+    totalPrice: number;
+    date: string;
+  }
 
-const columns: TableProps<DataType>['columns'] = [
-  {
-    title: '名字',
-    dataIndex: 'name',
-    key: 'name',
-    render: (text) => <a>{text}</a>,
-  },
-  {
-    title: '种类',
-    dataIndex: 'category',
-    key: 'category',
-  },
-  {
-    title: '数量',
-    dataIndex: 'quantity',
-    key: 'quantity',
-  },
-  {
-    title: '单价',
-    dataIndex: 'price',
-    key: 'price',
-    render: (price) => `¥${price.toFixed(2)}`,
-  },
-  {
-    title: '总价',
-    dataIndex: 'totalPrice',
-    key: 'totalPrice',
-    render: (totalPrice) => `¥${totalPrice.toFixed(2)}`,
-  },
-  {
-    title: '日期',
-    dataIndex: 'date',
-    key: 'date',
-  },
-];
+  const columns: TableProps<DataType>['columns'] = [
+    {
+      title: '名字',
+      dataIndex: 'name',
+      key: 'name',
+      render: (text) => <a>{text}</a>,
+    },
+    {
+      title: 'IP',
+      dataIndex: 'ip',
+      key: 'ip',
+    },
+    {
+      title: '种类',
+      dataIndex: 'category',
+      key: 'category',
+    },
+    {
+      title: '数量',
+      dataIndex: 'quantity',
+      key: 'quantity',
+    },
+    {
+      title: '单价',
+      dataIndex: 'price',
+      key: 'price',
+      render: (price) => `¥${price.toFixed(2)}`,
+    },
+    {
+      title: '总价',
+      dataIndex: 'totalPrice',
+      key: 'totalPrice',
+      render: (totalPrice) => `¥${totalPrice.toFixed(2)}`,
+    },
+    {
+      title: '日期',
+      dataIndex: 'date',
+      key: 'date',
+    },
+  ];
 
-const data: DataType[] = [
-  {
-    key: '1',
-    name: '产品A',
-    category: '电子产品',
-    quantity: 5,
-    price: 100.00,
-    totalPrice: 5 * 100.00,
-    date: '2023-10-15',
-  },
-  {
-    key: '2',
-    name: '产品B',
-    category: '办公用品',
-    quantity: 10,
-    price: 50.50,
-    totalPrice: 10 * 50.50,
-    date: '2023-10-15',
-  },
-  {
-    key: '3',
-    name: '产品C',
-    category: '电子产品',
-    quantity: 3,
-    price: 199.99,
-    totalPrice: 3 * 199.99,
-    date: '2023-10-16',
-  },
-  {
-    key: '4',
-    name: '产品D',
-    category: '日用品',
-    quantity: 7,
-    price: 29.99,
-    totalPrice: 7 * 29.99,
-    date: '2023-10-16',
-  },
-  {
-    key: '5',
-    name: '产品E',
-    category: '电子产品',
-    quantity: 2,
-    price: 499.00,
-    totalPrice: 2 * 499.00,
-    date: '2023-10-17',
-  },
-  {
-    key: '6',
-    name: '产品F',
-    category: '办公用品',
-    quantity: 12,
-    price: 15.50,
-    totalPrice: 12 * 15.50,
-    date: '2023-10-17',
-  },
-  {
-    key: '7',
-    name: '产品G',
-    category: '日用品',
-    quantity: 4,
-    price: 89.99,
-    totalPrice: 4 * 89.99,
-    date: '2023-10-18',
-  },
-];
+  const data: DataType[] = [
+    {
+      key: '1',
+      name: '产品A',
+      ip: '1',
+      category: '电子产品',
+      quantity: 5,
+      price: 100.00,
+      totalPrice: 5 * 100.00,
+      date: '2023-10-15',
+    },
+    {
+      key: '2',
+      name: '产品B',
+      ip: '2',
+      category: '办公用品',
+      quantity: 10,
+      price: 50.50,
+      totalPrice: 10 * 50.50,
+      date: '2023-10-15',
+    },
+    {
+      key: '3',
+      name: '产品C',
+      ip: '3',
+      category: '电子产品',
+      quantity: 3,
+      price: 199.99,
+      totalPrice: 3 * 199.99,
+      date: '2023-10-16',
+    },
+    {
+      key: '4',
+      name: '产品D',
+      ip: '4',
+      category: '日用品',
+      quantity: 7,
+      price: 29.99,
+      totalPrice: 7 * 29.99,
+      date: '2023-10-16',
+    },
+    {
+      key: '5',
+      name: '产品E',
+      ip: '5',
+      category: '电子产品',
+      quantity: 2,
+      price: 499.00,
+      totalPrice: 2 * 499.00,
+      date: '2023-10-17',
+    },
+    {
+      key: '6',
+      name: '产品F',
+      ip: '6',
+      category: '办公用品',
+      quantity: 12,
+      price: 15.50,
+      totalPrice: 12 * 15.50,
+      date: '2023-10-17',
+    },
+    {
+      key: '7',
+      name: '产品G',
+      ip: '7',
+      category: '日用品',
+      quantity: 4,
+      price: 89.99,
+      totalPrice: 4 * 89.99,
+      date: '2023-10-18',
+    },
+    {
+      key: '8',
+      name: '产品H',
+      ip: '8',
+      category: '日用品',
+      quantity: 4,
+      price: 89.99,
+      totalPrice: 4 * 89.99,
+      date: '2023-10-18',
+    },
+    {
+      key: '9',
+      name: '产品II',
+      ip: '9',
+      category: '日用品',
+      quantity: 4,
+      price: 89.99,
+      totalPrice: 4 * 89.99,
+      date: '2023-10-18',
+    },
+    {
+      key: '10',
+      name: '产品J',
+      ip: '10',
+      category: '日用品',
+      quantity: 4,
+      price: 89.99,
+      totalPrice: 4 * 89.99,
+      date: '2023-10-18',
+    },
+    {
+      key: '11',
+      name: '产品K',
+      ip: '11',
+      category: '日用品',
+      quantity: 4,
+      price: 89.99,
+      totalPrice: 4 * 89.99,
+      date: '2023-10-18',
+    },
+    {
+      key: '12',
+      name: '产品L',
+      ip: '12',
+      category: '日用品',
+      quantity: 4,
+      price: 89.99,
+      totalPrice: 4 * 89.99,
+      date: '2023-10-18',
+    },
+    {
+      key: '13',
+      name: '产品M',
+      ip: '13',
+      category: '日用品',
+      quantity: 4,
+      price: 89.99,
+      totalPrice: 4 * 89.99,
+      date: '2023-10-18',
+    },
+    {
+      key: '14',
+      name: '产品N',
+      ip: '14',
+      category: '日用品',
+      quantity: 4,
+      price: 89.99,
+      totalPrice: 4 * 89.99,
+      date: '2023-10-18',
+    },
+    {
+      key: '15',
+      name: '产品O',
+      ip: '15',
+      category: '日用品',
+      quantity: 4,
+      price: 89.99,
+      totalPrice: 4 * 89.99,
+      date: '2023-10-18',
+    },
+  ];
 
   return (
     <PageContainer>
       <Card
         style={{
           borderRadius: 8,
-          height: '520px',
+          height: '720px',
         }}
       >
         <div style={{ marginBottom: 20, display: 'flex', alignItems: 'center' }}>
@@ -229,9 +326,9 @@ const data: DataType[] = [
           </div>
           <Button type="primary" onClick={handleOpen} style={{ marginLeft: 'auto' }}>添加</Button>
         </div>
-        
-        
-        <Table<DataType> columns={columns} dataSource={data} pagination={{ pageSize: 6, position: ['bottomCenter'] }} />
+
+
+        <Table<DataType> columns={columns} dataSource={data} pagination={{ pageSize: 9, position: ['bottomCenter'] }} />
 
         {/* 添加项目的弹窗 */}
         <Modal
@@ -249,6 +346,16 @@ const data: DataType[] = [
                 value={formData.name}
                 onChange={handleInputChange}
                 placeholder="输入项目名称"
+                style={{ width: '100%' }}
+              />
+            </div>
+            <div>
+              <label style={{ display: 'block', marginBottom: 8, fontWeight: 'bold' }}>IP</label>
+              <Input
+                name="ip"
+                value={formData.ip}
+                onChange={handleInputChange}
+                placeholder="输入IP地址"
                 style={{ width: '100%' }}
               />
             </div>
