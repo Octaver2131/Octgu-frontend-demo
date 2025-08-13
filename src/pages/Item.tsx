@@ -3,10 +3,17 @@ import { Card, Input, DatePicker, Space, Tag, Table, Button, Modal } from 'antd'
 import type { DatePickerProps } from 'antd';
 import type { TableProps } from 'antd';
 import React from 'react';
+import moment from 'moment';
 
 const Item: React.FC = () => {
-  // 控制弹窗显示的状态
+  // 控制添加弹窗显示的状态
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+
+  // 控制编辑弹窗显示的状态
+  const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
+
+  // 当前编辑的记录
+  const [currentEditRecord, setCurrentEditRecord] = React.useState<DataType | null>(null);
 
   // 表单数据状态
   const [formData, setFormData] = React.useState<Partial<DataType>>({
@@ -94,6 +101,59 @@ const Item: React.FC = () => {
     setIsModalOpen(false);
   };
 
+  // 处理编辑按钮点击
+  const handleEdit = (record: DataType) => {
+    setCurrentEditRecord(record);
+    setFormData({
+      name: record.name,
+      ip: record.ip,
+      category: record.category,
+      quantity: record.quantity,
+      price: record.price,
+      date: record.date
+    });
+    setIsEditModalOpen(true);
+  };
+
+  // 编辑弹窗确认
+  const handleEditOk = () => {
+    // 验证表单
+    if (!formData.name || !formData.ip || !formData.category || !formData.date) {
+      alert('请填写完整信息');
+      return;
+    }
+
+    // 计算总价
+    const totalPrice = (formData.quantity || 0) * (formData.price || 0);
+
+    // 更新数据
+    if (currentEditRecord) {
+      const index = data.findIndex(item => item.key === currentEditRecord.key);
+      if (index !== -1) {
+        data[index] = {
+          ...currentEditRecord,
+          name: formData.name,
+          ip: formData.ip,
+          category: formData.category,
+          quantity: formData.quantity || 0,
+          price: formData.price || 0,
+          totalPrice,
+          date: formData.date
+        };
+      }
+    }
+
+    // 关闭弹窗
+    setIsEditModalOpen(false);
+    setCurrentEditRecord(null);
+  };
+
+  // 编辑弹窗取消
+  const handleEditCancel = () => {
+    setIsEditModalOpen(false);
+    setCurrentEditRecord(null);
+  };
+
   // 搜索处理函数
   const onSearch = (value: string) => {
     console.log('搜索内容:', value);
@@ -151,11 +211,7 @@ const Item: React.FC = () => {
       key: 'totalPrice',
       render: (totalPrice) => `¥${totalPrice.toFixed(2)}`,
     },
-    {
-      title: '日期',
-      dataIndex: 'date',
-      key: 'date',
-    },
+    {      title: '日期',      dataIndex: 'date',      key: 'date',    },    {      title: '操作',      key: 'action',      render: (_, record) => (        <Button type="primary" onClick={() => handleEdit(record)}>编辑</Button>      ),    },
   ];
 
   const data: DataType[] = [
@@ -328,78 +384,151 @@ const Item: React.FC = () => {
         </div>
 
 
-        <Table<DataType> columns={columns} dataSource={data} pagination={{ pageSize: 9, position: ['bottomCenter'] }} />
+        <Table<DataType> columns={columns} dataSource={data} pagination={{ pageSize: 8, position: ['bottomCenter'] }} />
 
         {/* 添加项目的弹窗 */}
         <Modal
-          title="添加新项目"
-          open={isModalOpen}
-          onOk={handleOk}
-          onCancel={handleCancel}
-          width={400}
-        >
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16, padding: 16 }}>
-            <div>
-              <label style={{ display: 'block', marginBottom: 8, fontWeight: 'bold' }}>名字</label>
-              <Input
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
-                placeholder="输入项目名称"
-                style={{ width: '100%' }}
-              />
-            </div>
-            <div>
-              <label style={{ display: 'block', marginBottom: 8, fontWeight: 'bold' }}>IP</label>
-              <Input
-                name="ip"
-                value={formData.ip}
-                onChange={handleInputChange}
-                placeholder="输入IP地址"
-                style={{ width: '100%' }}
-              />
-            </div>
-            <div>
-              <label style={{ display: 'block', marginBottom: 8, fontWeight: 'bold' }}>种类</label>
-              <Input
-                name="category"
-                value={formData.category}
-                onChange={handleInputChange}
-                placeholder="输入项目种类"
-                style={{ width: '100%' }}
-              />
-            </div>
-            <div>
-              <label style={{ display: 'block', marginBottom: 8, fontWeight: 'bold' }}>数量</label>
-              <Input
-                name="quantity"
-                type="number"
-                value={formData.quantity}
-                onChange={handleInputChange}
-                placeholder="输入项目数量"
-                style={{ width: '100%' }}
-              />
-            </div>
-            <div>
-              <label style={{ display: 'block', marginBottom: 8, fontWeight: 'bold' }}>单价</label>
-              <Input
-                name="price"
-                type="number"
-                value={formData.price}
-                onChange={handleInputChange}
-                placeholder="输入项目单价"
-                style={{ width: '100%' }}
-              />
-            </div>
-            <div>
-              <label style={{ display: 'block', marginBottom: 8, fontWeight: 'bold' }}>日期</label>
-              <DatePicker
-                onChange={handleDateChange}
-                style={{ width: '100%' }}
-              />
-            </div>
+        title="添加新项目"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        width={400}
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, padding: 16 }}>
+          <div>
+            <label style={{ display: 'block', marginBottom: 8, fontWeight: 'bold' }}>名字</label>
+            <Input
+              name="name"
+              value={formData.name}
+              onChange={handleInputChange}
+              placeholder="输入项目名称"
+              style={{ width: '100%' }}
+            />
           </div>
-        </Modal>
+          <div>
+            <label style={{ display: 'block', marginBottom: 8, fontWeight: 'bold' }}>IP</label>
+            <Input
+              name="ip"
+              value={formData.ip}
+              onChange={handleInputChange}
+              placeholder="输入IP地址"
+              style={{ width: '100%' }}
+            />
+          </div>
+          <div>
+            <label style={{ display: 'block', marginBottom: 8, fontWeight: 'bold' }}>种类</label>
+            <Input
+              name="category"
+              value={formData.category}
+              onChange={handleInputChange}
+              placeholder="输入项目种类"
+              style={{ width: '100%' }}
+            />
+          </div>
+          <div>
+            <label style={{ display: 'block', marginBottom: 8, fontWeight: 'bold' }}>数量</label>
+            <Input
+              name="quantity"
+              type="number"
+              value={formData.quantity}
+              onChange={handleInputChange}
+              placeholder="输入项目数量"
+              style={{ width: '100%' }}
+            />
+          </div>
+          <div>
+            <label style={{ display: 'block', marginBottom: 8, fontWeight: 'bold' }}>单价</label>
+            <Input
+              name="price"
+              type="number"
+              value={formData.price}
+              onChange={handleInputChange}
+              placeholder="输入项目单价"
+              style={{ width: '100%' }}
+            />
+          </div>
+          <div>
+            <label style={{ display: 'block', marginBottom: 8, fontWeight: 'bold' }}>日期</label>
+            <DatePicker
+              onChange={handleDateChange}
+              value={formData.date ? moment(formData.date) : null}
+              style={{ width: '100%' }}
+            />
+          </div>
+        </div>
+      </Modal>
+
+      {/* 编辑弹窗 */}
+      <Modal
+        title="编辑项目"
+        open={isEditModalOpen}
+        onOk={handleEditOk}
+        onCancel={handleEditCancel}
+        width={400}
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, padding: 16 }}>
+          <div>
+            <label style={{ display: 'block', marginBottom: 8, fontWeight: 'bold' }}>名字</label>
+            <Input
+              name="name"
+              value={formData.name}
+              onChange={handleInputChange}
+              placeholder="输入项目名称"
+              style={{ width: '100%' }}
+            />
+          </div>
+          <div>
+            <label style={{ display: 'block', marginBottom: 8, fontWeight: 'bold' }}>IP</label>
+            <Input
+              name="ip"
+              value={formData.ip}
+              onChange={handleInputChange}
+              placeholder="输入IP地址"
+              style={{ width: '100%' }}
+            />
+          </div>
+          <div>
+            <label style={{ display: 'block', marginBottom: 8, fontWeight: 'bold' }}>种类</label>
+            <Input
+              name="category"
+              value={formData.category}
+              onChange={handleInputChange}
+              placeholder="输入项目种类"
+              style={{ width: '100%' }}
+            />
+          </div>
+          <div>
+            <label style={{ display: 'block', marginBottom: 8, fontWeight: 'bold' }}>数量</label>
+            <Input
+              name="quantity"
+              type="number"
+              value={formData.quantity}
+              onChange={handleInputChange}
+              placeholder="输入项目数量"
+              style={{ width: '100%' }}
+            />
+          </div>
+          <div>
+            <label style={{ display: 'block', marginBottom: 8, fontWeight: 'bold' }}>单价</label>
+            <Input
+              name="price"
+              type="number"
+              value={formData.price}
+              onChange={handleInputChange}
+              placeholder="输入项目单价"
+              style={{ width: '100%' }}
+            />
+          </div>
+          <div>
+            <label style={{ display: 'block', marginBottom: 8, fontWeight: 'bold' }}>日期</label>
+            <DatePicker
+              onChange={handleDateChange}
+              value={formData.date ? moment(formData.date) : null}
+              style={{ width: '100%' }}
+            />
+          </div>
+        </div>
+      </Modal>
       </Card>
     </PageContainer>
   );
