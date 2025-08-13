@@ -10,6 +10,7 @@ const Footer: React.FC = () => {
     <DefaultFooter
       style={{
         background: 'none',
+        marginTop: '-60px', // 减小与上方内容的间距
       }}
       copyright={`${currentYear} ${defaultMessage}`}
       links={[
