@@ -9,13 +9,14 @@ const Settings: ProLayoutProps & {
 } = {
   navTheme: 'light',
   // 拂晓蓝
+  logo: '/favicon.ico',
   colorPrimary: '#1890ff',
   layout: 'mix',
   contentWidth: 'Fluid',
   fixedHeader: false,
   fixSiderbar: true,
   colorWeak: false,
-  title: '鱼皮前端万用模板',
+  title: '咕噜咕噜',
   pwa: true,
   iconfontUrl: '',
   token: {
