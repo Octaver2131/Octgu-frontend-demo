@@ -7,9 +7,9 @@ export default [
       { path: '/user/register', component: './User/Register' },
     ],
   },
-  { path: '/welcome', icon: 'LikeOutlined', component: './Welcome', name: '欢迎页' },
-  { path: '/overview', icon: 'BarChartOutlined', component: './Overview', name: '概览页' },
-  { path: '/item', icon: 'FormOutlined', component: './Item', name: '项目页' },
+  { path: '/welcome', icon: 'LikeOutlined', component: './Welcome', name: '欢迎页', access: 'canUser' },
+  { path: '/overview', icon: 'BarChartOutlined', component: './Overview', name: '概览页', access: 'canUser' },
+  { path: '/item', icon: 'FormOutlined', component: './Item', name: '项目页',  access: 'canUser'},
   {
     path: '/admin',
     icon: 'crown',
@@ -20,6 +20,6 @@ export default [
       { icon: 'table', path: '/admin/user', component: './Admin/User', name: '用户管理' },
     ],
   },
-  { path: '/', redirect: '/welcome' },
+  { path: '/', redirect: '/user/login' },
   { path: '*', layout: false, component: './404' },
 ];
