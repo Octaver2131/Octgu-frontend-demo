@@ -1,5 +1,5 @@
 import { PageContainer } from '@ant-design/pro-components';
-import { Card, Input, DatePicker, Space, Tag, Table, Button, Modal } from 'antd';
+import { Card, Input, DatePicker, Table, Button, Modal } from 'antd';
 import type { DatePickerProps } from 'antd';
 import type { TableProps } from 'antd';
 import React from 'react';
@@ -22,7 +22,8 @@ const Item: React.FC = () => {
     category: '',
     quantity: 0,
     price: 0,
-    date: ''
+    date: '',
+    description: ''
   });
 
   // 打开弹窗
@@ -34,7 +35,8 @@ const Item: React.FC = () => {
       category: '',
       quantity: 0,
       price: 0,
-      date: ''
+      date: '',
+      description: ''
     });
     setIsModalOpen(true);
   };
@@ -76,7 +78,8 @@ const Item: React.FC = () => {
       quantity: formData.quantity || 0,
       price: formData.price || 0,
       totalPrice,
-      date: formData.date
+      date: formData.date,
+      description: formData.description
     };
 
     // 添加到数据数组
@@ -92,13 +95,33 @@ const Item: React.FC = () => {
       category: '',
       quantity: 0,
       price: 0,
-      date: ''
+      date: '',
+      description: ''
     });
   };
 
   // 关闭弹窗（取消）
   const handleCancel = () => {
     setIsModalOpen(false);
+  };
+
+  // 处理删除按钮点击
+  const handleDelete = (record: DataType) => {
+    Modal.confirm({
+      title: '确认删除',
+      content: `确定要删除项目 ${record.name} 吗？`,
+      okText: '确定',
+      cancelText: '取消',
+      centered: true,
+      onOk() {
+        const index = data.findIndex(item => item.key === record.key);
+        if (index !== -1) {
+          data.splice(index, 1);
+          // 强制重新渲染
+          setFormData(prev => ({ ...prev }));
+        }
+      },
+    });
   };
 
   // 处理编辑按钮点击
@@ -110,7 +133,8 @@ const Item: React.FC = () => {
       category: record.category,
       quantity: record.quantity,
       price: record.price,
-      date: record.date
+      date: record.date,
+      description: record.description || ''
     });
     setIsEditModalOpen(true);
   };
@@ -131,15 +155,16 @@ const Item: React.FC = () => {
       const index = data.findIndex(item => item.key === currentEditRecord.key);
       if (index !== -1) {
         data[index] = {
-          ...currentEditRecord,
-          name: formData.name,
-          ip: formData.ip,
-          category: formData.category,
-          quantity: formData.quantity || 0,
-          price: formData.price || 0,
-          totalPrice,
-          date: formData.date
-        };
+            ...currentEditRecord,
+            name: formData.name,
+            ip: formData.ip,
+            category: formData.category,
+            quantity: formData.quantity || 0,
+            price: formData.price || 0,
+            totalPrice,
+            date: formData.date,
+            description: formData.description
+          };
       }
     }
 
@@ -175,6 +200,7 @@ const Item: React.FC = () => {
     price: number;
     totalPrice: number;
     date: string;
+    description?: string;
   }
 
   const columns: TableProps<DataType>['columns'] = [
@@ -211,7 +237,22 @@ const Item: React.FC = () => {
       key: 'totalPrice',
       render: (totalPrice) => `¥${totalPrice.toFixed(2)}`,
     },
-    {      title: '日期',      dataIndex: 'date',      key: 'date',    },    {      title: '操作',      key: 'action',      render: (_, record) => (        <Button type="primary" onClick={() => handleEdit(record)}>编辑</Button>      ),    },
+    {      
+      title: '日期',      
+      dataIndex: 'date',      
+      key: 'date',    
+    },    
+    {      
+      title: '操作',     
+       key: 'action',     
+       width: 150,      
+       render: (_, record) => (        
+        <div style={{ display: 'flex', gap: 8 }}>          
+          <Button type="primary" onClick={() => handleEdit(record)}>编辑</Button>         
+          <Button type="default" onClick={() => handleDelete(record)}>删除</Button>        
+        </div>      
+      ),    
+    },
   ];
 
   const data: DataType[] = [
@@ -455,6 +496,17 @@ const Item: React.FC = () => {
               style={{ width: '100%' }}
             />
           </div>
+          <div>
+            <label style={{ display: 'block', marginBottom: 8, fontWeight: 'bold' }}>描述</label>
+            <Input.TextArea
+              name="description"
+              value={formData.description}
+              onChange={handleInputChange}
+              placeholder="输入项目描述"
+              style={{ width: '100%' }}
+              rows={4}
+            />
+          </div>
         </div>
       </Modal>
 
@@ -483,7 +535,7 @@ const Item: React.FC = () => {
               name="ip"
               value={formData.ip}
               onChange={handleInputChange}
-              placeholder="输入IP地址"
+              placeholder="输入IP"
               style={{ width: '100%' }}
             />
           </div>
@@ -525,6 +577,17 @@ const Item: React.FC = () => {
               onChange={handleDateChange}
               value={formData.date ? moment(formData.date) : null}
               style={{ width: '100%' }}
+            />
+          </div>
+          <div>
+            <label style={{ display: 'block', marginBottom: 8, fontWeight: 'bold' }}>描述</label>
+            <Input.TextArea
+              name="description"
+              value={formData.description}
+              onChange={handleInputChange}
+              placeholder="输入项目描述"
+              style={{ width: '100%' }}
+              rows={4}
             />
           </div>
         </div>
