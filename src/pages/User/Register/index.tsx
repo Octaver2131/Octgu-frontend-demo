@@ -74,7 +74,7 @@ const UserRegisterPage: React.FC = () => {
             minWidth: 280,
             maxWidth: '75vw',
           }}
-          logo={<img alt="logo" style={{ height: '100%' }} src="/logo.svg" />}
+          logo={<img alt="logo" style={{ height: '100%' }} src="/favicon.ico" />}
           title="鱼厂招聘系统 - 注册"
           subTitle={'高效招聘、爽快求职'}
           initialValues={{
