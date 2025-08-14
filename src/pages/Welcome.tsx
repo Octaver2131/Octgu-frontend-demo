@@ -50,7 +50,7 @@ const InfoCard: React.FC<{
             color: '#FFF',
             fontWeight: 'bold',
             backgroundImage:
-              "url('https://gw.alipayobjects.com/zos/bmw-prod/daaf8d50-8e6d-4251-905d-676a24ddfa12.svg')",
+              "url('https://gw.alipayobjects.com/zos/bmw-prod/daaf8d50-8e6d-4251-905d-676a24ddfa12.svg')",//TODO
           }}
         >
           {index}
@@ -106,7 +106,7 @@ const Welcome: React.FC = () => {
             backgroundRepeat: 'no-repeat',
             backgroundSize: '274px auto',
             backgroundImage:
-              "url('https://gw.alipayobjects.com/mdn/rms_a9745b/afts/img/A*BuFmQqsB2iAAAAAAAAAAAAAAARQnAQ')",
+              "url('')",//TODO
           }}
         >
           <div
@@ -115,7 +115,7 @@ const Welcome: React.FC = () => {
               color: token.colorTextHeading,
             }}
           >
-            欢迎使用 Ant Design Pro
+            欢迎使用 咕噜咕噜 ！
           </div>
           <p
             style={{
@@ -127,8 +127,15 @@ const Welcome: React.FC = () => {
               width: '65%',
             }}
           >
-            Ant Design Pro 是一个整合了 umi，Ant Design 和 ProComponents
-            的脚手架方案。致力于在设计规范和基础组件的基础上，继续向上构建，提炼出典型模板/业务组件/配套设计资源，进一步提升企业级中后台产品设计研发过程中的『用户』和『设计者』的体验。
+            “咕噜咕噜” 诞生于一次突发奇想 —— 我们深知各位同好整理谷子时的手忙脚乱，所以想做一个能帮大家快速搞定谷子收纳、分类与管理的小工具。
+            <br/>
+            无论是徽章、立牌、色纸还是吧唧，在这里都能轻松归档；不用再对着堆积的周边犯愁，让每一件心头好都有清晰的记录。
+            <br/>
+            要是“咕噜咕噜”帮你理顺了谷子，不妨请开发组喝杯咖啡呀～
+
+            毕竟肝代码时全靠咖啡因续命，你的一杯“咖啡钱”，哪怕不多，都会变成优化功能的动力——让分类更顺手，加载更丝滑～
+
+            用一杯咖啡的温度，换它陪你更久，怎么样？☕️
           </p>
           <div
             style={{
