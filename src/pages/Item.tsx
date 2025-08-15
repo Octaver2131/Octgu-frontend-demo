@@ -1,9 +1,10 @@
 import { PageContainer } from '@ant-design/pro-components';
-import { Card, Input, DatePicker, Table, Button, Modal } from 'antd';
+import { Card, Input, DatePicker, Table, Button, Modal, message } from 'antd';
 import type { DatePickerProps } from 'antd';
 import type { TableProps } from 'antd';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import moment from 'moment';
+import { addItemUsingPost, deleteItemUsingPost, updateItemUsingPost, listItemByPageUsingGet } from '@/services/backend/itemController';
 
 const Item: React.FC = () => {
   // 控制添加弹窗显示的状态
@@ -24,6 +25,87 @@ const Item: React.FC = () => {
     price: 0,
     date: '',
     description: ''
+  });
+
+  // 表格数据状态
+  const [data, setData] = useState<DataType[]>([]);
+  
+  // 搜索关键词状态
+  const [searchText, setSearchText] = useState<string>('');
+  
+  // 选定的日期状态
+  const [selectedDate, setSelectedDate] = useState<string>('');
+  
+  // 加载数据
+  const loadData = async () => {
+    try {
+      // 自适应获取所有分页数据
+      let allItems: any[] = [];
+      let current = 1;
+      const pageSize = 10; // 使用默认分页大小
+      let hasMore = true;
+
+      // 循环获取所有分页数据
+      while (hasMore) {
+        const res = await listItemByPageUsingGet({
+          current,
+          pageSize
+        });
+        
+        if (res.data?.records) {
+          // 将当前页数据添加到总数据中
+          allItems = [...allItems, ...res.data.records];
+          
+          // 检查是否还有更多数据
+          // 如果当前页数据少于pageSize，说明已经是最后一页
+          if (res.data.records.length < pageSize) {
+            hasMore = false;
+          } else {
+            // 还有更多数据，继续下一页
+            current++;
+          }
+        } else {
+          // 如果没有数据返回，停止循环
+          hasMore = false;
+        }
+      }
+
+      // 处理所有数据并设置到状态中
+      const items = allItems.map(item => ({
+        key: String(item.id),
+        name: item.itemName || '',
+        ip: item.itemIp || '',
+        category: item.itemCategory || '',
+        quantity: item.purchaseNumber || 0,
+        price: item.unitPrice || 0,
+        totalPrice: item.totalPrice || 0,
+        date: item.purchaseTime ? moment(item.purchaseTime).format('YYYY-MM-DD') : '',
+        description: item.description || ''
+      }));
+      setData(items);
+    } catch (error) {
+      message.error('获取数据失败');
+    }
+  };
+
+  // 组件挂载时加载数据
+  useEffect(() => {
+    loadData();
+  }, []);
+  
+  // 根据搜索关键词和选定日期过滤数据
+  const filteredData = data.filter(item => {
+    // 搜索过滤条件
+    const matchesSearch = 
+      (item.name && item.name.toLowerCase().includes(searchText.toLowerCase())) ||
+      (item.ip && item.ip.toLowerCase().includes(searchText.toLowerCase())) ||
+      (item.category && item.category.toLowerCase().includes(searchText.toLowerCase()));
+    
+    // 日期过滤条件
+    const matchesDate = selectedDate ? item.date === selectedDate : true;
+    
+    // 同时满足搜索和日期条件
+    return matchesSearch && matchesDate;
   });
 
   // 打开弹窗
@@ -59,45 +141,36 @@ const Item: React.FC = () => {
   };
 
   // 关闭弹窗（确认）
-  const handleOk = () => {
+  const handleOk = async () => {
     // 验证表单
     if (!formData.name || !formData.ip || !formData.category || !formData.date) {
-      alert('请填写完整信息');
+      message.error('请填写完整信息');
       return;
     }
 
-    // 计算总价
-    const totalPrice = (formData.quantity || 0) * (formData.price || 0);
+    try {
+      // 创建新数据项
+      const res = await addItemUsingPost({
+        itemName: formData.name,
+        itemIp: formData.ip,
+        itemCategory: formData.category,
+        purchaseNumber: formData.quantity,
+        unitPrice: formData.price,
+        totalPrice: (formData.quantity || 0) * (formData.price || 0),
+        purchaseTime: formData.date ? new Date(formData.date) : undefined,
+        description: formData.description
+      });
 
-    // 创建新数据项
-    const newItem: DataType = {
-      key: String(data.length + 1),
-      name: formData.name,
-      ip: formData.ip,
-      category: formData.category,
-      quantity: formData.quantity || 0,
-      price: formData.price || 0,
-      totalPrice,
-      date: formData.date,
-      description: formData.description
-    };
-
-    // 添加到数据数组
-    data.push(newItem);
-
-    // 关闭弹窗
-    setIsModalOpen(false);
-
-    // 强制重新渲染
-    setFormData({
-      name: '',
-      ip: '',
-      category: '',
-      quantity: 0,
-      price: 0,
-      date: '',
-      description: ''
-    });
+      if (res.code === 0) {
+        message.success('添加成功');
+        setIsModalOpen(false);
+        loadData(); // 重新加载数据
+      } else {
+        message.error(res.message || '添加失败');
+      }
+    } catch (error) {
+      message.error('添加失败');
+    }
   };
 
   // 关闭弹窗（取消）
@@ -113,12 +186,17 @@ const Item: React.FC = () => {
       okText: '确定',
       cancelText: '取消',
       centered: true,
-      onOk() {
-        const index = data.findIndex(item => item.key === record.key);
-        if (index !== -1) {
-          data.splice(index, 1);
-          // 强制重新渲染
-          setFormData(prev => ({ ...prev }));
+      onOk: async () => {
+        try {
+          const res = await deleteItemUsingPost({ id: Number(record.key) });
+          if (res.code === 0) {
+            message.success('删除成功');
+            loadData(); // 重新加载数据
+          } else {
+            message.error(res.message || '删除失败');
+          }
+        } catch (error) {
+          message.error('删除失败');
         }
       },
     });
@@ -140,37 +218,38 @@ const Item: React.FC = () => {
   };
 
   // 编辑弹窗确认
-  const handleEditOk = () => {
+  const handleEditOk = async () => {
     // 验证表单
     if (!formData.name || !formData.ip || !formData.category || !formData.date) {
-      alert('请填写完整信息');
+      message.error('请填写完整信息');
       return;
     }
 
-    // 计算总价
-    const totalPrice = (formData.quantity || 0) * (formData.price || 0);
+    try {
+      // 更新数据
+      const res = await updateItemUsingPost({
+        id: Number(currentEditRecord?.key),
+        itemName: formData.name,
+        itemIp: formData.ip,
+        itemCategory: formData.category,
+        purchaseNumber: formData.quantity,
+        unitPrice: formData.price,
+        totalPrice: (formData.quantity || 0) * (formData.price || 0),
+        purchaseTime: formData.date ? new Date(formData.date) : undefined,
+        description: formData.description
+      });
 
-    // 更新数据
-    if (currentEditRecord) {
-      const index = data.findIndex(item => item.key === currentEditRecord.key);
-      if (index !== -1) {
-        data[index] = {
-            ...currentEditRecord,
-            name: formData.name,
-            ip: formData.ip,
-            category: formData.category,
-            quantity: formData.quantity || 0,
-            price: formData.price || 0,
-            totalPrice,
-            date: formData.date,
-            description: formData.description
-          };
+      if (res.code === 0) {
+        message.success('更新成功');
+        setIsEditModalOpen(false);
+        setCurrentEditRecord(null);
+        loadData(); // 重新加载数据
+      } else {
+        message.error(res.message || '更新失败');
       }
+    } catch (error) {
+      message.error('更新失败');
     }
-
-    // 关闭弹窗
-    setIsEditModalOpen(false);
-    setCurrentEditRecord(null);
   };
 
   // 编辑弹窗取消
@@ -181,12 +260,11 @@ const Item: React.FC = () => {
 
   // 搜索处理函数
   const onSearch = (value: string) => {
-    console.log('搜索内容:', value);
-    // 这里可以添加实际的搜索逻辑
+    setSearchText(value);
   };
 
   const onChange: DatePickerProps['onChange'] = (date, dateString) => {
-    console.log(date, dateString);
+    setSelectedDate(dateString);
   };
 
   const { Search } = Input;
@@ -241,6 +319,8 @@ const Item: React.FC = () => {
       title: '日期',      
       dataIndex: 'date',      
       key: 'date',    
+      sorter: (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+      sortDirections: ['ascend', 'descend'],
     },    
     {      
       title: '操作',     
@@ -252,159 +332,6 @@ const Item: React.FC = () => {
           <Button type="default" onClick={() => handleDelete(record)}>删除</Button>        
         </div>      
       ),    
-    },
-  ];
-
-  const data: DataType[] = [
-    {
-      key: '1',
-      name: '产品A',
-      ip: '1',
-      category: '电子产品',
-      quantity: 5,
-      price: 100.00,
-      totalPrice: 5 * 100.00,
-      date: '2023-10-15',
-    },
-    {
-      key: '2',
-      name: '产品B',
-      ip: '2',
-      category: '办公用品',
-      quantity: 10,
-      price: 50.50,
-      totalPrice: 10 * 50.50,
-      date: '2023-10-15',
-    },
-    {
-      key: '3',
-      name: '产品C',
-      ip: '3',
-      category: '电子产品',
-      quantity: 3,
-      price: 199.99,
-      totalPrice: 3 * 199.99,
-      date: '2023-10-16',
-    },
-    {
-      key: '4',
-      name: '产品D',
-      ip: '4',
-      category: '日用品',
-      quantity: 7,
-      price: 29.99,
-      totalPrice: 7 * 29.99,
-      date: '2023-10-16',
-    },
-    {
-      key: '5',
-      name: '产品E',
-      ip: '5',
-      category: '电子产品',
-      quantity: 2,
-      price: 499.00,
-      totalPrice: 2 * 499.00,
-      date: '2023-10-17',
-    },
-    {
-      key: '6',
-      name: '产品F',
-      ip: '6',
-      category: '办公用品',
-      quantity: 12,
-      price: 15.50,
-      totalPrice: 12 * 15.50,
-      date: '2023-10-17',
-    },
-    {
-      key: '7',
-      name: '产品G',
-      ip: '7',
-      category: '日用品',
-      quantity: 4,
-      price: 89.99,
-      totalPrice: 4 * 89.99,
-      date: '2023-10-18',
-    },
-    {
-      key: '8',
-      name: '产品H',
-      ip: '8',
-      category: '日用品',
-      quantity: 4,
-      price: 89.99,
-      totalPrice: 4 * 89.99,
-      date: '2023-10-18',
-    },
-    {
-      key: '9',
-      name: '产品II',
-      ip: '9',
-      category: '日用品',
-      quantity: 4,
-      price: 89.99,
-      totalPrice: 4 * 89.99,
-      date: '2023-10-18',
-    },
-    {
-      key: '10',
-      name: '产品J',
-      ip: '10',
-      category: '日用品',
-      quantity: 4,
-      price: 89.99,
-      totalPrice: 4 * 89.99,
-      date: '2023-10-18',
-    },
-    {
-      key: '11',
-      name: '产品K',
-      ip: '11',
-      category: '日用品',
-      quantity: 4,
-      price: 89.99,
-      totalPrice: 4 * 89.99,
-      date: '2023-10-18',
-    },
-    {
-      key: '12',
-      name: '产品L',
-      ip: '12',
-      category: '日用品',
-      quantity: 4,
-      price: 89.99,
-      totalPrice: 4 * 89.99,
-      date: '2023-10-18',
-    },
-    {
-      key: '13',
-      name: '产品M',
-      ip: '13',
-      category: '日用品',
-      quantity: 4,
-      price: 89.99,
-      totalPrice: 4 * 89.99,
-      date: '2023-10-18',
-    },
-    {
-      key: '14',
-      name: '产品N',
-      ip: '14',
-      category: '日用品',
-      quantity: 4,
-      price: 89.99,
-      totalPrice: 4 * 89.99,
-      date: '2023-10-18',
-    },
-    {
-      key: '15',
-      name: '产品O',
-      ip: '15',
-      category: '日用品',
-      quantity: 4,
-      price: 89.99,
-      totalPrice: 4 * 89.99,
-      date: '2023-10-18',
     },
   ];
 
@@ -425,7 +352,7 @@ const Item: React.FC = () => {
         </div>
 
 
-        <Table<DataType> columns={columns} dataSource={data} pagination={{ pageSize: 8, position: ['bottomCenter'] }} />
+        <Table<DataType> columns={columns} dataSource={filteredData} pagination={{ pageSize: 8, position: ['bottomCenter'], showSizeChanger: false }} />
 
         {/* 添加项目的弹窗 */}
         <Modal
