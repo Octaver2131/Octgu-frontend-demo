@@ -327,3 +327,97 @@ declare namespace API {
     userRole?: string;
   };
 }
+
+type Item = {
+  id?: number;
+  itemName?: string;
+  itemIp?: string;
+  description?: string;
+  itemCategory?: string;
+  unitPrice?: number;
+  totalPrice?: number;
+  purchaseNumber?: number;
+  purchaseTime?: string;
+  createTime?: string;
+  updateTime?: string;
+  isDelete?: number;
+};
+
+type ItemAddRequest = {
+  itemName?: string;
+  itemIp?: string;
+  description?: string;
+  itemCategory?: string;
+  unitPrice?: number;
+  totalPrice?: number;
+  purchaseNumber?: number;
+  purchaseTime?: string;
+};
+
+type ItemUpdateRequest = {
+  id?: number;
+  itemName?: string;
+  itemIp?: string;
+  description?: string;
+  itemCategory?: string;
+  unitPrice?: number;
+  totalPrice?: number;
+  purchaseNumber?: number;
+  purchaseTime?: string;
+};
+
+type ItemQueryRequest = {
+  id?: number;
+  itemName?: string;
+  itemIp?: string;
+  description?: string;
+  itemCategory?: string;
+  unitPrice?: number;
+  totalPrice?: number;
+  purchaseNumber?: number;
+  purchaseTime?: string;
+  purchaseTimeStart?: string;
+  purchaseTimeEnd?: string;
+  current?: number;
+  pageSize?: number;
+  sortField?: string;
+  sortOrder?: string;
+};
+
+type ItemVO = {
+  id?: number;
+  itemName?: string;
+  itemIp?: string;
+  itemCategory?: string;
+  unitPrice?: number;
+  totalPrice?: number;
+  purchaseNumber?: number;
+  purchaseTime?: string;
+  createTime?: string;
+  updateTime?: string;
+};
+
+  type BaseResponseItemVO_ = {
+    code?: number;
+    data?: ItemVO;
+    message?: string;
+  };
+
+  type BaseResponsePageItemVO_ = {
+    code?: number;
+    data?: PageItemVO_;
+    message?: string;
+  };
+
+  type PageItemVO_ = {
+    countId?: string;
+    current?: string;
+    maxLimit?: string;
+    optimizeCountSql?: boolean;
+    orders?: OrderItem[];
+    pages?: string;
+    records?: ItemVO[];
+    searchCount?: boolean;
+    size?: string;
+    total?: string;
+  };
