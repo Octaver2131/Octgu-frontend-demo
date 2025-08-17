@@ -82,12 +82,12 @@ const Overview: React.FC = () => {
         {/* 数据概览区 */}
         <div style={{ display: 'flex', gap: 16, marginBottom: 20 }}>
           <div style={{ flex: 1, padding: 16, backgroundColor: '#f0f2f5', borderRadius: 8 }}>
-            <div style={{ fontSize: 14, color: '#666', marginBottom: 8 }}>本年支出</div>
+            <div style={{ fontSize: 14, color: '#666', marginBottom: 8 }}>全部支出</div>
             <div style={{ fontSize: 24, fontWeight: 'bold' }}>¥310,000.40</div>
             <div style={{ fontSize: 12, color: '#52c41a', marginTop: 4 }}>+15.2% 同比</div>
           </div>
           <div style={{ flex: 1, padding: 16, backgroundColor: '#f0f2f5', borderRadius: 8 }}>
-            <div style={{ fontSize: 14, color: '#666', marginBottom: 8 }}>本月支出</div>
+            <div style={{ fontSize: 14, color: '#666', marginBottom: 8 }}>本年支出</div>
             <div style={{ fontSize: 24, fontWeight: 'bold' }}>¥31,000.40</div>
             <div style={{ fontSize: 12, color: '#52c41a', marginTop: 4 }}>+8.7% 环比</div>
           </div>
@@ -100,6 +100,7 @@ const Overview: React.FC = () => {
 
         {/* 顶部筛选区 */}
         <div style={{ marginBottom: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div></div>
           <div style={{ display: 'flex', gap: 16 }}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <span style={{ marginRight: 8 }}>选择年份:</span>
