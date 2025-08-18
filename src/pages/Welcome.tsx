@@ -76,7 +76,7 @@ const InfoCard: React.FC<{
       >
         {desc}
       </div>
-      <a 
+      <a
         onClick={(e) => {
           e.preventDefault();
           if (title === "使用指南") {
@@ -84,9 +84,9 @@ const InfoCard: React.FC<{
           } else {
             window.open(href, '_blank');
           }
-        }} 
-        href={href} 
-        target="_blank" 
+        }}
+        href={href}
+        target="_blank"
         rel="noreferrer"
         style={{ cursor: 'pointer' }}
       >
@@ -161,17 +161,17 @@ const Welcome: React.FC = () => {
               <Divider orientation='left'>一款专为谷子爱好者设计的收藏管理工具</Divider>
               <br />
               <Typography.Paragraph>亲爱的二次元同好，无论你心爱的是闪亮徽章、精致立牌、唯美色纸，还是琳琅满目的吧唧，这里都是你珍藏每一份心动的理想家园。</Typography.Paragraph>
-              
+
               <Typography.Paragraph>
                 「咕噜咕噜」专为热爱而生，致力于终结“谷子迷了路”和“收纳混乱”的烦恼！为你提供：
                 <br />
-                &nbsp;&nbsp;&nbsp;&nbsp;<Typography.Text strong>清晰归档：</Typography.Text> 为每件宝贝建立专属档案，归属一目了然。 
+                &nbsp;&nbsp;&nbsp;&nbsp;<Typography.Text strong>清晰归档：</Typography.Text> 为每件宝贝建立专属档案，归属一目了然。
                 <br />
                 &nbsp;&nbsp;&nbsp;&nbsp;<Typography.Text strong>智能分类：</Typography.Text> 按角色、作品、类型...随心定义，井井有条。
                 <br />
                 &nbsp;&nbsp;&nbsp;&nbsp;<Typography.Text strong>整洁有序：</Typography.Text> 告别杂乱，让你的收藏殿堂时刻闪耀光彩！！！
               </Typography.Paragraph>
-              
+
               <Typography.Paragraph>
                 <Typography.Text delete>加入我们的用户群，与其他谷子爱好者分享经验、交换收藏、共同成长加入用户群。</Typography.Text>  （其实没有 TAT）
               </Typography.Paragraph>
@@ -199,19 +199,19 @@ const Welcome: React.FC = () => {
               display: 'flex',
               flexWrap: 'wrap',
               gap: 16,
-              marginTop: 16, 
+              marginTop: 16,
             }}
           >
             <InfoCard
               index={1}
-              href="https://github.com/OctGuzzu/OctGuzzu-backend-demo"
+              href="https://github.com/Octaver2131/Octgu-backend-demo"
               title="查看后端代码"
               desc="咕噜咕噜的后端基于Spring Boot构建，提供了稳定可靠的API服务。"
             />
             <InfoCard
               index={2}
               title="查看前端代码"
-              href="https://github.com/OctGuzzu/OctGuzzu-frontend-demo"
+              href="https://github.com/Octaver2131/Octgu-frontend-demo"
               desc="咕噜咕噜的前端基于Ant Design Pro构建，提供了美观易用的用户界面。"
             />
             <InfoCard
