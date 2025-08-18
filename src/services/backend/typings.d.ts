@@ -409,6 +409,12 @@ type ItemVO = {
     message?: string;
   };
 
+  type BaseResponseMapStringObject_ = {
+    code?: number;
+    data?: MapStringObject;
+    message?: string;
+  };
+
   type PageItemVO_ = {
     countId?: string;
     current?: string;
@@ -421,3 +427,8 @@ type ItemVO = {
     size?: string;
     total?: string;
   };
+
+  type MapStringObject = {
+    [key: string]: any;
+  };
+}
