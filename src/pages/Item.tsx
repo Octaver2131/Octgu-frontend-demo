@@ -95,15 +95,17 @@ const Item: React.FC = () => {
   };
 
   // 导出CSV功能
+  // 导出数据为CSV格式
   const exportToCSV = () => {
-    // 定义CSV内容的表头
-    const headers = ['名字', 'IP', '种类', '数量', '单价', '总价', '日期'];
+    // 定义CSV表头
+    const headers = ['名字', '描述', 'IP', '种类', '数量', '单价', '总价', '日期'];
     
     // 将数据转换为CSV格式
     const csvContent = [
       headers.join(','),
       ...filteredData.map(item => [
         item.name,
+        item.description || '',
         item.ip,
         item.category,
         item.quantity,
