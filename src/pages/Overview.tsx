@@ -46,7 +46,7 @@ const Overview: React.FC = () => {
   // 定义年份状态，默认为当前年份，使用dayjs对象
   const [year, setYear] = useState<dayjs.Dayjs | null>(dayjs());
   // 定义统计数据状态
-  const [statistics, setStatistics] = useState<API.MapStringObject>({});
+  const [statistics, setStatistics] = useState<Record<string, any>>({});
   // 定义图表数据状态
   const [chartData, setChartData] = useState([]);
 
