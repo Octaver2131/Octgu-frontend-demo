@@ -1,5 +1,5 @@
 import { PageContainer } from '@ant-design/pro-components';
-import { Card, Input, DatePicker, Table, Button, Modal, message } from 'antd';
+import { Card, Input, DatePicker, Table, Button, Modal, message, Tooltip } from 'antd';
 import type { DatePickerProps } from 'antd';
 import type { TableProps } from 'antd';
 import React, { useEffect, useState } from 'react';
@@ -71,6 +71,9 @@ const Item: React.FC = () => {
       }
 
       // 处理所有数据并设置到状态中
+      // 调试：打印原始数据结构
+      console.log('原始数据:', allItems);
+      
       const items = allItems.map(item => ({
         key: String(item.id),
         name: item.itemName || '',
@@ -82,10 +85,44 @@ const Item: React.FC = () => {
         date: item.purchaseTime ? moment(item.purchaseTime).format('YYYY-MM-DD') : '',
         description: item.description || ''
       }));
+      
+      // 调试：打印处理后的数据结构
+      console.log('处理后的数据:', items);
       setData(items);
     } catch (error) {
       message.error('获取数据失败');
     }
+  };
+
+  // 导出CSV功能
+  const exportToCSV = () => {
+    // 定义CSV内容的表头
+    const headers = ['名字', 'IP', '种类', '数量', '单价', '总价', '日期'];
+    
+    // 将数据转换为CSV格式
+    const csvContent = [
+      headers.join(','),
+      ...filteredData.map(item => [
+        item.name,
+        item.ip,
+        item.category,
+        item.quantity,
+        item.price,
+        item.totalPrice,
+        item.date
+      ].map(field => `"${String(field).replace(/"/g, '""')}"`).join(','))
+    ].join('\n');
+    
+    // 创建下载链接
+    const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `items_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   // 组件挂载时加载数据
@@ -278,7 +315,7 @@ const Item: React.FC = () => {
     price: number;
     totalPrice: number;
     date: string;
-    description?: string;
+    description: string;
   }
 
   const columns: TableProps<DataType>['columns'] = [
@@ -286,7 +323,11 @@ const Item: React.FC = () => {
       title: '名字',
       dataIndex: 'name',
       key: 'name',
-      render: (text) => <a>{text}</a>,
+      render: (text, record) => (
+        <Tooltip title={record.description || '暂无描述'}>
+          <a>{text}</a>
+        </Tooltip>
+      ),
     },
     {
       title: 'IP',
@@ -348,7 +389,10 @@ const Item: React.FC = () => {
             <Search placeholder="输入搜索内容" onSearch={onSearch} style={{ width: 300, marginRight: 16 }} />
             <DatePicker onChange={onChange} />
           </div>
-          <Button type="primary" onClick={handleOpen} style={{ marginLeft: 'auto' }}>添加</Button>
+          <div style={{ marginLeft: 'auto' }}>
+            <Button type="default" onClick={exportToCSV} style={{ marginRight: 16 }}>导出</Button>
+            <Button type="primary" onClick={handleOpen}>添加</Button>
+          </div>
         </div>
 
 
