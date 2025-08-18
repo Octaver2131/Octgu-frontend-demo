@@ -21,6 +21,8 @@ const Login: React.FC = () => {
       backgroundImage:
         "url('https://mdn.alipayobjects.com/yuyan_qk0oxh/afts/img/V-_oS6r-i7wAAAAAAAAAAAAAFl94AQBr')",
       backgroundSize: '100% 100%',
+      justifyContent: 'center',
+      alignItems: 'center',
     };
   });
 
@@ -56,7 +58,6 @@ const Login: React.FC = () => {
       </Helmet>
       <div
         style={{
-          flex: '1',
           padding: '32px 0',
         }}
       >
@@ -64,6 +65,7 @@ const Login: React.FC = () => {
           contentStyle={{
             minWidth: 280,
             maxWidth: '75vw',
+            flex: 'none',
           }}
           title="咕噜咕噜"
           subTitle={'快速整谷小助手'}
