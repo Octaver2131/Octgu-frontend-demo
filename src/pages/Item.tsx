@@ -82,7 +82,7 @@ const Item: React.FC = () => {
         quantity: item.purchaseNumber || 0,
         price: item.unitPrice || 0,
         totalPrice: item.totalPrice || 0,
-        date: item.purchaseTime ? moment(item.purchaseTime).format('YYYY-MM-DD') : '',
+        date: item.purchaseTime ? moment(item.purchaseTime).format('YYYY-MM') : '',
         description: item.description || ''
       }));
       
@@ -140,8 +140,8 @@ const Item: React.FC = () => {
       (item.ip && item.ip.toLowerCase().includes(searchText.toLowerCase())) ||
       (item.category && item.category.toLowerCase().includes(searchText.toLowerCase()));
     
-    // 日期过滤条件
-    const matchesDate = selectedDate ? item.date === selectedDate : true;
+    // 日期过滤条件 - 比较年月部分
+    const matchesDate = selectedDate ? item.date.startsWith(selectedDate) : true;
     
     // 同时满足搜索和日期条件
     return matchesSearch && matchesDate;
@@ -173,6 +173,7 @@ const Item: React.FC = () => {
 
   // 处理日期选择
   const handleDateChange: DatePickerProps['onChange'] = (date, dateString) => {
+    // 日期选择器返回的 dateString 格式为 "YYYY-MM-DD"
     setFormData(prev => ({
       ...prev,
       date: dateString
@@ -196,7 +197,7 @@ const Item: React.FC = () => {
         purchaseNumber: formData.quantity,
         unitPrice: formData.price,
         totalPrice: (formData.quantity || 0) * (formData.price || 0),
-        purchaseTime: formData.date ? new Date(formData.date) : undefined,
+        purchaseTime: formData.date ? new Date(formData.date).toISOString() : undefined,
         description: formData.description
       });
 
@@ -274,7 +275,7 @@ const Item: React.FC = () => {
         purchaseNumber: formData.quantity,
         unitPrice: formData.price,
         totalPrice: (formData.quantity || 0) * (formData.price || 0),
-        purchaseTime: formData.date ? new Date(formData.date) : undefined,
+        purchaseTime: formData.date ? new Date(formData.date).toISOString() : undefined,
         description: formData.description
       });
 
@@ -303,7 +304,8 @@ const Item: React.FC = () => {
   };
 
   const onChange: DatePickerProps['onChange'] = (date, dateString) => {
-    setSelectedDate(dateString ? (Array.isArray(dateString) ? dateString[0] || '' : dateString) : '');
+    // 月份选择器返回的 dateString 格式为 "YYYY-MM"
+    setSelectedDate(dateString || '');
   };
 
   const { Search } = Input;
@@ -362,7 +364,7 @@ const Item: React.FC = () => {
       title: '日期',      
       dataIndex: 'date',      
       key: 'date',    
-      sorter: (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+      sorter: (a, b) => moment(a.date, 'YYYY-MM').valueOf() - moment(b.date, 'YYYY-MM').valueOf(),
       sortDirections: ['ascend', 'descend'],
     },    
     {      
@@ -389,7 +391,7 @@ const Item: React.FC = () => {
         <div style={{ marginBottom: 20, display: 'flex', alignItems: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <Search placeholder="输入搜索内容" onSearch={onSearch} style={{ width: 300, marginRight: 16 }} />
-            <DatePicker onChange={onChange} />
+            <DatePicker onChange={onChange} picker="month" />
           </div>
           <div style={{ marginLeft: 'auto' }}>
             <Button type="default" onClick={exportToCSV} style={{ marginRight: 16 }}>导出</Button>
