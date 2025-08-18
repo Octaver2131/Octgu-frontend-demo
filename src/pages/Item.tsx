@@ -225,7 +225,7 @@ const Item: React.FC = () => {
       centered: true,
       onOk: async () => {
         try {
-          const res = await deleteItemUsingPost({ id: Number(record.key) });
+          const res = await deleteItemUsingPost({ id: record.key });
           if (res.code === 0) {
             message.success('删除成功');
             loadData(); // 重新加载数据
@@ -301,7 +301,7 @@ const Item: React.FC = () => {
   };
 
   const onChange: DatePickerProps['onChange'] = (date, dateString) => {
-    setSelectedDate(dateString);
+    setSelectedDate(dateString ? (Array.isArray(dateString) ? dateString[0] || '' : dateString) : '');
   };
 
   const { Search } = Input;
@@ -320,7 +320,7 @@ const Item: React.FC = () => {
 
   const columns: TableProps<DataType>['columns'] = [
     {
-      title: '名字',
+      title: '名称',
       dataIndex: 'name',
       key: 'name',
       render: (text, record) => (
@@ -400,7 +400,7 @@ const Item: React.FC = () => {
 
         {/* 添加项目的弹窗 */}
         <Modal
-        title="添加新项目"
+        title="添加谷子"
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
@@ -413,7 +413,7 @@ const Item: React.FC = () => {
               name="name"
               value={formData.name}
               onChange={handleInputChange}
-              placeholder="输入项目名称"
+              placeholder="输入谷子名称"
               style={{ width: '100%' }}
             />
           </div>
@@ -423,7 +423,7 @@ const Item: React.FC = () => {
               name="ip"
               value={formData.ip}
               onChange={handleInputChange}
-              placeholder="输入IP地址"
+              placeholder="输入谷子IP"
               style={{ width: '100%' }}
             />
           </div>
@@ -433,7 +433,7 @@ const Item: React.FC = () => {
               name="category"
               value={formData.category}
               onChange={handleInputChange}
-              placeholder="输入项目种类"
+              placeholder="输入谷子种类"
               style={{ width: '100%' }}
             />
           </div>
@@ -444,7 +444,7 @@ const Item: React.FC = () => {
               type="number"
               value={formData.quantity}
               onChange={handleInputChange}
-              placeholder="输入项目数量"
+              placeholder="输入谷子数量"
               style={{ width: '100%' }}
             />
           </div>
@@ -455,7 +455,7 @@ const Item: React.FC = () => {
               type="number"
               value={formData.price}
               onChange={handleInputChange}
-              placeholder="输入项目单价"
+              placeholder="输入谷子单价"
               style={{ width: '100%' }}
             />
           </div>
@@ -473,7 +473,7 @@ const Item: React.FC = () => {
               name="description"
               value={formData.description}
               onChange={handleInputChange}
-              placeholder="输入项目描述"
+              placeholder="输入谷子描述"
               style={{ width: '100%' }}
               rows={4}
             />
@@ -483,7 +483,7 @@ const Item: React.FC = () => {
 
       {/* 编辑弹窗 */}
       <Modal
-        title="编辑项目"
+        title="编辑谷子"
         open={isEditModalOpen}
         onOk={handleEditOk}
         onCancel={handleEditCancel}
@@ -491,12 +491,12 @@ const Item: React.FC = () => {
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16, padding: 16 }}>
           <div>
-            <label style={{ display: 'block', marginBottom: 8, fontWeight: 'bold' }}>名字</label>
+            <label style={{ display: 'block', marginBottom: 8, fontWeight: 'bold' }}>名称</label>
             <Input
               name="name"
               value={formData.name}
               onChange={handleInputChange}
-              placeholder="输入项目名称"
+              placeholder="输入谷子名称"
               style={{ width: '100%' }}
             />
           </div>
@@ -506,7 +506,7 @@ const Item: React.FC = () => {
               name="ip"
               value={formData.ip}
               onChange={handleInputChange}
-              placeholder="输入IP"
+              placeholder="输入谷子IP"
               style={{ width: '100%' }}
             />
           </div>
@@ -516,7 +516,7 @@ const Item: React.FC = () => {
               name="category"
               value={formData.category}
               onChange={handleInputChange}
-              placeholder="输入项目种类"
+              placeholder="输入谷子种类"
               style={{ width: '100%' }}
             />
           </div>
@@ -527,7 +527,7 @@ const Item: React.FC = () => {
               type="number"
               value={formData.quantity}
               onChange={handleInputChange}
-              placeholder="输入项目数量"
+              placeholder="输入谷子数量"
               style={{ width: '100%' }}
             />
           </div>
@@ -538,7 +538,7 @@ const Item: React.FC = () => {
               type="number"
               value={formData.price}
               onChange={handleInputChange}
-              placeholder="输入项目单价"
+              placeholder="输入谷子单价"
               style={{ width: '100%' }}
             />
           </div>
@@ -556,7 +556,7 @@ const Item: React.FC = () => {
               name="description"
               value={formData.description}
               onChange={handleInputChange}
-              placeholder="输入项目描述"
+              placeholder="输入谷子描述"
               style={{ width: '100%' }}
               rows={4}
             />
