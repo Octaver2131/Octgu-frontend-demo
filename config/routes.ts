@@ -9,7 +9,7 @@ export default [
   },
   { path: '/welcome', icon: 'LikeOutlined', component: './Welcome', name: '欢迎页', access: 'canUser' },
   { path: '/overview', icon: 'BarChartOutlined', component: './Overview', name: '概览页', access: 'canUser' },
-  { path: '/item', icon: 'FormOutlined', component: './Item', name: '项目页',  access: 'canUser'},
+  { path: '/item', icon: 'FormOutlined', component: './Item', name: '管理页',  access: 'canUser'},
   {
     path: '/admin',
     icon: 'crown',
