@@ -1,26 +1,9 @@
 import { PageContainer } from '@ant-design/pro-components';
 import { Card, DatePicker } from 'antd';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Line } from '@ant-design/charts';
-
-// 月度销售mock数据
-const chartData = [
-  { '月份': '1月', '支出': 12500.50 },
-  { '月份': '2月', '支出': 15200.75 },
-  { '月份': '3月', '支出': 18700.20 },
-  { '月份': '4月', '支出': 16800.40 },
-  { '月份': '5月', '支出': 21000.80 },
-  { '月份': '6月', '支出': 23500.30 },
-  { '月份': '7月', '支出': 25900.60 },
-  { '月份': '8月', '支出': 28300.90 },
-  { '月份': '9月', '支出': 22100.50 },
-  { '月份': '10月', '支出': 24700.70 },
-  { '月份': '11月', '支出': 27300.20 },
-  { '月份': '12月', '支出': 31000.40 },
-];
-
-// 调试信息
-console.log('chartData:', chartData);
+import { getStatisticsUsingGet, getMonthlyStatisticsUsingGet } from '@/services/backend/itemController';
+import dayjs from 'dayjs';
 
 // 图表配置
 const config = {
@@ -32,7 +15,6 @@ const config = {
     visible: true,
     text: '展示每月产品销售总额的变化趋势',
   },
-  data: chartData,
   xField: '月份',
   yField: '支出',
   padding: { top: 'auto', right: 'auto', bottom: 0, left: 'auto' },
@@ -44,7 +26,6 @@ const config = {
       visible: true,
       text: '月份',
     },
-    data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
   },
   yAxis: {
     type: 'value',
@@ -62,14 +43,52 @@ const config = {
 };
 
 const Overview: React.FC = () => {
-  // 定义年份状态
-  const [year, setYear] = useState<Date | null>(null);
+  // 定义年份状态，默认为当前年份，使用dayjs对象
+  const [year, setYear] = useState<dayjs.Dayjs | null>(dayjs());
+  // 定义统计数据状态
+  const [statistics, setStatistics] = useState<API.MapStringObject>({});
+  // 定义图表数据状态
+  const [chartData, setChartData] = useState([]);
 
   // 处理年份变化
-  const handleYearChange = (date: Date | null) => {
+  const handleYearChange = (date: dayjs.Dayjs | null) => {
     setYear(date);
   };
 
+  // 获取统计数据
+  useEffect(() => {
+    getStatisticsUsingGet().then((res) => {
+      if (res.data) {
+        setStatistics(res.data);
+      }
+    });
+  }, []);
+
+  // 获取每月统计数据
+  useEffect(() => {
+    // 从year状态中提取年份，如果没有选择年份则使用当前年份
+    const selectedYear = year ? year.year() : dayjs().year();
+    
+    getMonthlyStatisticsUsingGet({ year: selectedYear }).then((res) => {
+      if (res.data) {
+        // 将后端返回的数据转换为图表所需格式
+        const formattedData = res.data.map((item: any) => ({
+          '月份': item.month,
+          '支出': item.expense
+        }));
+        
+        // 更新图表数据
+        setChartData(formattedData);
+      }
+    });
+  }, [year]);
+
+  // 格式化金额显示
+  const formatCurrency = (value: number | string | undefined) => {
+    if (value === undefined) return '¥0.00';
+    const num = typeof value === 'string' ? parseFloat(value) : value;
+    return `¥${num.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  };
 
   return (
     <PageContainer>
@@ -83,18 +102,16 @@ const Overview: React.FC = () => {
         <div style={{ display: 'flex', gap: 16, marginBottom: 20 }}>
           <div style={{ flex: 1, padding: 16, backgroundColor: '#f0f2f5', borderRadius: 8 }}>
             <div style={{ fontSize: 14, color: '#666', marginBottom: 8 }}>全部支出</div>
-            <div style={{ fontSize: 24, fontWeight: 'bold' }}>¥310,000.40</div>
-            <div style={{ fontSize: 12, color: '#52c41a', marginTop: 4 }}>+15.2% 同比</div>
+            <div style={{ fontSize: 24, fontWeight: 'bold' }}>{formatCurrency(statistics.totalExpense)}</div>
           </div>
           <div style={{ flex: 1, padding: 16, backgroundColor: '#f0f2f5', borderRadius: 8 }}>
             <div style={{ fontSize: 14, color: '#666', marginBottom: 8 }}>本年支出</div>
-            <div style={{ fontSize: 24, fontWeight: 'bold' }}>¥31,000.40</div>
-            <div style={{ fontSize: 12, color: '#52c41a', marginTop: 4 }}>+8.7% 环比</div>
+            <div style={{ fontSize: 24, fontWeight: 'bold' }}>{formatCurrency(statistics.yearExpense)}</div>
           </div>
           <div style={{ flex: 1, padding: 16, backgroundColor: '#f0f2f5', borderRadius: 8 }}>
             <div style={{ fontSize: 14, color: '#666', marginBottom: 8 }}>最喜欢的IP</div>
-            <div style={{ fontSize: 24, fontWeight: 'bold' }}>产品A</div>
-            <div style={{ fontSize: 12, color: '#666', marginTop: 4 }}>数量: 12,500件</div>
+            <div style={{ fontSize: 24, fontWeight: 'bold' }}>{statistics.favoriteIp || '暂无数据'}</div>
+            <div style={{ fontSize: 12, color: '#666', marginTop: 4 }}>数量: {statistics.favoriteIpCount?.toLocaleString()}件</div>
           </div>
         </div>
 
@@ -111,7 +128,7 @@ const Overview: React.FC = () => {
 
         {/* 图表区域 */}
         <div style={{ height: '480px', marginTop: '20px' }}>
-          <Line {...config} />
+          <Line {...{ ...config, data: chartData }} />
         </div>
       </Card>
     </PageContainer>
