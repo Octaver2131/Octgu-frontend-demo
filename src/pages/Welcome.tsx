@@ -1,6 +1,6 @@
 import { PageContainer } from '@ant-design/pro-components';
 import { useModel } from '@umijs/max';
-import { Card, theme, Typography, message, notification, Button, Space } from 'antd';
+import { Card, theme, Typography, message, notification, Button, Space, Divider } from 'antd';
 import React from 'react';
 
 /**
@@ -158,7 +158,8 @@ const Welcome: React.FC = () => {
           >
             <div>
               <Typography.Paragraph>一款专为谷子爱好者设计的收藏管理工具。</Typography.Paragraph>
-              <br />          
+              {/*水平分割线 */}
+              <Divider />
               <Typography.Paragraph>亲爱的二次元同好，无论你心爱的是闪亮徽章、精致立牌、唯美色纸，还是琳琅满目的吧唧，这里都是你珍藏每一份心动的理想家园。</Typography.Paragraph>
               
               <Typography.Paragraph>
@@ -172,13 +173,13 @@ const Welcome: React.FC = () => {
               </Typography.Paragraph>
               
               <Typography.Paragraph>
-                <Typography.Text delete>加入我们的用户群，与其他谷子爱好者分享经验、交换收藏、共同成长加入用户群。</Typography.Text>（其实没有 TAT）
+                <Typography.Text delete>加入我们的用户群，与其他谷子爱好者分享经验、交换收藏、共同成长加入用户群。</Typography.Text>  （其实没有 TAT）
               </Typography.Paragraph>
 
               <Typography.Paragraph>
                 喜欢「咕噜咕噜」带来的轻松管理体验？
                 <br />
-                你的认可，是我们前进的最大动力！❤️
+                你的认可，是我们前进的最大动力！
               </Typography.Paragraph>
             </div>
             <div style={{ marginTop: 16 }}>
@@ -187,7 +188,7 @@ const Welcome: React.FC = () => {
 
             {/* 目标位置 */}
             {contextHolder}
-            <div style={{ marginTop: 64, display: 'flex', justifyContent: 'center' }}>
+            <div style={{ marginTop: 48, display: 'flex', justifyContent: 'center' }}>
               <Button type="primary" onClick={openNotification}>
                 请点击我
               </Button>
