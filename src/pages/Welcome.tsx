@@ -1,6 +1,6 @@
 import { PageContainer } from '@ant-design/pro-components';
 import { useModel } from '@umijs/max';
-import { Card, theme } from 'antd';
+import { Card, theme, Typography, message, notification, Button, Space } from 'antd';
 import React from 'react';
 
 /**
@@ -50,7 +50,7 @@ const InfoCard: React.FC<{
             color: '#FFF',
             fontWeight: 'bold',
             backgroundImage:
-              "url('https://gw.alipayobjects.com/zos/bmw-prod/daaf8d50-8e6d-4251-905d-676a24ddfa12.svg')",//TODO
+              "url('https://gw.alipayobjects.com/zos/bmw-prod/daaf8d50-8e6d-4251-905d-676a24ddfa12.svg')"
           }}
         >
           {index}
@@ -76,7 +76,20 @@ const InfoCard: React.FC<{
       >
         {desc}
       </div>
-      <a href={href} target="_blank" rel="noreferrer">
+      <a 
+        onClick={(e) => {
+          e.preventDefault();
+          if (title === "使用指南") {
+            message.loading('功能开发中...', 1.5);
+          } else {
+            window.open(href, '_blank');
+          }
+        }} 
+        href={href} 
+        target="_blank" 
+        rel="noreferrer"
+        style={{ cursor: 'pointer' }}
+      >
         了解更多 {'>'}
       </a>
     </div>
@@ -86,6 +99,37 @@ const InfoCard: React.FC<{
 const Welcome: React.FC = () => {
   const { token } = theme.useToken();
   const { initialState } = useModel('@@initialState');
+  const [api, contextHolder] = notification.useNotification();
+
+  const close = () => {
+    console.log(
+      'Notification was closed. Either the close button was clicked or duration time elapsed.',
+    );
+  };
+
+  const openNotification = () => {
+    const key = `open${Date.now()}`;
+    const btn = (
+      <Space>
+        <Button type="link" size="small" onClick={() => api.destroy()}>
+          取消
+        </Button>
+        <Button type="primary" size="small" onClick={() => api.destroy(key)}>
+          确定
+        </Button>
+      </Space>
+    );
+    api.open({
+      message: '扩列请求',
+      description:
+        '劳斯请和我扩列吧.',
+      btn,
+      key,
+      onClose: close,
+      placement: 'bottomRight',
+    });
+  };
+
   return (
     <PageContainer>
       <Card
@@ -100,67 +144,80 @@ const Welcome: React.FC = () => {
               : 'background-image: linear-gradient(75deg, #FBFDFF 0%, #F5F7FF 100%)',
         }}
       >
-        <div
-          style={{
-            backgroundPosition: '100% -30%',
-            backgroundRepeat: 'no-repeat',
-            backgroundSize: '274px auto',
-            backgroundImage:
-              "url('')",//TODO
-          }}
-        >
+        <div>
+          <Typography.Title level={2}>欢迎来到「咕噜咕噜」！</Typography.Title>
           <div
             style={{
-              fontSize: '20px',
-              color: token.colorTextHeading,
-            }}
-          >
-            欢迎使用 咕噜咕噜 ！
-          </div>
-          <p
-            style={{
-              fontSize: '14px',
+              fontSize: '16px',
               color: token.colorTextSecondary,
-              lineHeight: '22px',
+              lineHeight: '24px',
               marginTop: 16,
               marginBottom: 32,
-              width: '65%',
+              width: '100%',
             }}
           >
-            “咕噜咕噜” 诞生于一次突发奇想 —— 我们深知各位同好整理谷子时的手忙脚乱，所以想做一个能帮大家快速搞定谷子收纳、分类与管理的小工具。
-            <br/>
-            无论是徽章、立牌、色纸还是吧唧，在这里都能轻松归档；不用再对着堆积的周边犯愁，让每一件心头好都有清晰的记录。
-            <br/>
-            要是“咕噜咕噜”帮你理顺了谷子，不妨请开发组喝杯咖啡呀～
+            <div>
+              <Typography.Paragraph>一款专为谷子爱好者设计的收藏管理工具。</Typography.Paragraph>
+              <br />          
+              <Typography.Paragraph>亲爱的二次元同好，无论你心爱的是闪亮徽章、精致立牌、唯美色纸，还是琳琅满目的吧唧，这里都是你珍藏每一份心动的理想家园。</Typography.Paragraph>
+              
+              <Typography.Paragraph>
+                「咕噜咕噜」专为热爱而生，致力于终结“谷子迷了路”和“收纳混乱”的烦恼！为你提供：
+                <br />
+                &nbsp;&nbsp;&nbsp;&nbsp;<Typography.Text strong>清晰归档：</Typography.Text> 为每件宝贝建立专属档案，归属一目了然。 
+                <br />
+                &nbsp;&nbsp;&nbsp;&nbsp;<Typography.Text strong>智能分类：</Typography.Text> 按角色、作品、类型...随心定义，井井有条。
+                <br />
+                &nbsp;&nbsp;&nbsp;&nbsp;<Typography.Text strong>整洁有序：</Typography.Text> 告别杂乱，让你的收藏殿堂时刻闪耀光彩！！！
+              </Typography.Paragraph>
+              
+              <Typography.Paragraph>
+                <Typography.Text delete>加入我们的用户群，与其他谷子爱好者分享经验、交换收藏、共同成长加入用户群。</Typography.Text>（其实没有 TAT）
+              </Typography.Paragraph>
 
-            毕竟肝代码时全靠咖啡因续命，你的一杯“咖啡钱”，哪怕不多，都会变成优化功能的动力——让分类更顺手，加载更丝滑～
+              <Typography.Paragraph>
+                喜欢「咕噜咕噜」带来的轻松管理体验？
+                <br />
+                你的认可，是我们前进的最大动力！❤️
+              </Typography.Paragraph>
+            </div>
+            <div style={{ marginTop: 16 }}>
+              <Typography.Paragraph><Typography.Text code>v1.0.0</Typography.Text> 版本已发布，欢迎体验！</Typography.Paragraph>
+            </div>
 
-            用一杯咖啡的温度，换它陪你更久，怎么样？☕️
-          </p>
+            {/* 目标位置 */}
+            {contextHolder}
+            <div style={{ marginTop: 64, display: 'flex', justifyContent: 'center' }}>
+              <Button type="primary" onClick={openNotification}>
+                请点击我
+              </Button>
+            </div>
+          </div>
           <div
             style={{
               display: 'flex',
               flexWrap: 'wrap',
               gap: 16,
+              marginTop: 16, 
             }}
           >
             <InfoCard
               index={1}
-              href="https://umijs.org/docs/introduce/introduce"
-              title="了解 umi"
-              desc="umi 是一个可扩展的企业级前端应用框架,umi 以路由为基础的，同时支持配置式路由和约定式路由，保证路由的功能完备，并以此进行功能扩展。"
+              href="https://github.com/OctGuzzu/OctGuzzu-backend-demo"
+              title="查看后端代码"
+              desc="咕噜咕噜的后端基于Spring Boot构建，提供了稳定可靠的API服务。"
             />
             <InfoCard
               index={2}
-              title="了解 ant design"
-              href="https://ant.design"
-              desc="antd 是基于 Ant Design 设计体系的 React UI 组件库，主要用于研发企业级中后台产品。"
+              title="查看前端代码"
+              href="https://github.com/OctGuzzu/OctGuzzu-frontend-demo"
+              desc="咕噜咕噜的前端基于Ant Design Pro构建，提供了美观易用的用户界面。"
             />
             <InfoCard
               index={3}
-              title="了解 Pro Components"
-              href="https://procomponents.ant.design"
-              desc="ProComponents 是一个基于 Ant Design 做了更高抽象的模板组件，以 一个组件就是一个页面为开发理念，为中后台开发带来更好的体验。"
+              title="使用指南"
+              href="#"
+              desc="了解如何使用咕噜咕噜的各项功能，快速上手管理你的谷子收藏。"
             />
           </div>
         </div>
