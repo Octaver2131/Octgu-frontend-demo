@@ -157,9 +157,9 @@ const Welcome: React.FC = () => {
             }}
           >
             <div>
-              <Typography.Paragraph>一款专为谷子爱好者设计的收藏管理工具。</Typography.Paragraph>
               {/*水平分割线 */}
-              <Divider />
+              <Divider orientation='left'>一款专为谷子爱好者设计的收藏管理工具</Divider>
+              <br />
               <Typography.Paragraph>亲爱的二次元同好，无论你心爱的是闪亮徽章、精致立牌、唯美色纸，还是琳琅满目的吧唧，这里都是你珍藏每一份心动的理想家园。</Typography.Paragraph>
               
               <Typography.Paragraph>
