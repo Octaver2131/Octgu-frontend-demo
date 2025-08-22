@@ -82,7 +82,7 @@ const Item: React.FC = () => {
         quantity: item.purchaseNumber || 0,
         price: item.unitPrice || 0,
         totalPrice: item.totalPrice || 0,
-        date: item.purchaseTime ? moment(item.purchaseTime).format('YYYY-MM') : '',
+        date: item.purchaseTime ? moment(item.purchaseTime).format('YYYY-MM-DD') : '',
         description: item.description || ''
       }));
       
@@ -364,7 +364,7 @@ const Item: React.FC = () => {
       title: '日期',      
       dataIndex: 'date',      
       key: 'date',    
-      sorter: (a, b) => moment(a.date, 'YYYY-MM').valueOf() - moment(b.date, 'YYYY-MM').valueOf(),
+      sorter: (a, b) => moment(a.date, 'YYYY-MM-DD').valueOf() - moment(b.date, 'YYYY-MM-DD').valueOf(),
       sortDirections: ['ascend', 'descend'],
     },    
     {      
